@@ -411,13 +411,13 @@ tmpfs                                                           15444244       0
 On [Minikube](https://github.com/kubernetes/minikube) the Virtualbox/VMware drivers for Minikube are recommended as there is a known
 issue between the KVM/KVM2 driver and TensorFlow Serving. The issue is tracked in [kubernetes/minikube#2377](https://github.com/kubernetes/minikube/issues/2377).
 
-Minikube by default allocates 2048Mb of RAM for its VM, however that may not align with the starting parameters for the JupyterHub server noted above. If you encounter a jupyter-xxxx pod in Pending status, described with:
+Minikube by default allocates 2048Mb of RAM, 2 CPUs and 20g of disk space for its VM, however that may not align with the starting parameters for the JupyterHub server noted above (especially the disk space due to the size of notebook image). To see the status of running kubeflow pods use `kubectl get pod --namespace $NAMESPACE`. You may use `kubectl describe pod -l app=jupyterhub --namespace $NAMESPACE` to see any error or event log. If you encounter a jupyter-xxxx pod in Pending status, described with:
 ```
 Warning  FailedScheduling  8s (x22 over 5m)  default-scheduler  0/1 nodes are available: 1 Insufficient memory.
 ```
-then try recreating your Minikube cluster (and re-apply Kubeflow using Ksonnet) with more resources (as your environment allows):
+or similar error due to insufficient resource then try recreating your Minikube cluster (and re-apply Kubeflow using Ksonnet) with more resources (as your environment allows):
 ```
-minikube start --cpus 4 --memory 8096
+minikube start --cpus 4 --memory 8096 --disk-size 50g
 ```
 
 ### RBAC clusters
